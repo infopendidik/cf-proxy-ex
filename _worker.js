@@ -14,8 +14,8 @@ const password = "";
 const showPasswordPage = true;
 const replaceUrlObj = "__location__yproxy__";
 
-var thisProxyServerUrlHttps;
-var thisProxyServerUrl_hostOnly;
+var thisProxyServerUrlHttps = "";
+var thisProxyServerUrl_hostOnly = "";
 // const CSSReplace = ["https://", "http://"];
 const proxyHintInjection = `
 
@@ -822,83 +822,155 @@ const mainPage = `
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Proxy</title>
   <style>
-    body{
-      background:rgb(150,10,10);
-      color:rgb(240,240,0);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    a{
-      color:rgb(250,250,180);
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    del{
-      color:rgb(190,190,190);
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
     }
-    .center{
-      text-align:center;
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 28px;
     }
-    .important{
-      font-weight:bold;
-      font-size:27;
+    .subtitle {
+      color: #666;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
     }
-    /* my style begins*/
-    form[id=urlForm] {
-        max-width: 340px;
-        min-width: 340px;
-        margin: 0 auto;
-     }
-    input[id=targetUrl] {
-        background-color: rgb(240,240,0);
-     }
-    button[id=jumpButton] {
-        background-color: rgb(240,240,0);
-     }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    #targetUrl {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    #targetUrl:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    #jumpButton {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #jumpButton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    #jumpButton:active {
+      transform: translateY(0);
+    }
+    .example {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+    .example strong {
+      color: #333;
+    }
+    .warning {
+      margin-top: 20px;
+      padding: 12px;
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #856404;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+    }
+    .footer a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-    <h3 class="center">
-        I made this project because some extreme annoying network filter software in my school, which is notorious "Goguardian", and now it is open source at <a href="https://github.com/1234567Yang/cf-proxy-ex/">https://github.com/1234567Yang/cf-proxy-ex/</a>.
-      </h3>
-      <br><br><br>
-      <ul style="font-size:25;">
-      <li class="important">How to use this proxy:<br>
-        Type the website you want to go to after the website's url, for example: <br>
-        https://the current url/github.com<br>OR<br>https://the current url/https://github.com</li>
-      </ul>
-        <form id="urlForm" onsubmit="redirectToProxy(event)">
-            <fieldset>
-                <legend>Proxy Everything</legend>
-                <label for="targetUrl">TargetUrl: <input type="text" id="targetUrl" placeholder="Enter the target URL here..."></label>
-                <button type="submit" id="jumpButton">Jump!</button>
-            </fieldset>
-        </form>
-        <script>
-            function redirectToProxy(event) {
-                event.preventDefault();
-                const targetUrl = document.getElementById('targetUrl').value.trim();
-                const currentOrigin = window.location.origin;
-                window.open(currentOrigin + '/' + targetUrl, '_blank');
-            }
-        </script>
-      <ul>
-        <li>If your browser show 400 bad request, please clear your browser cookie<br></li>
-        <li>Why I make this:<br> Because school blcok every website that I can find math / CS and other subjects' study material and question solutions. In the eyes of the school, China (and some other countries) seems to be outside the scope of this "world". They block access to server IP addresses in China and block access to Chinese search engines and video websites. Of course, some commonly used social software has also been blocked, which once made it impossible for me to send messages to my parents on campus. I don't think that's how it should be, so I'm going to fight it as hard as I can. I believe this will not only benefit myself, but a lot more people can get benefits.</li>
-        <li>If this website is blocked by your school: Setup a new one by your self.</li>
-        <li>Limitation:<br>Although I tried my best to make every website proxiable, there still might be pages or resources that can not be load, and the most important part is that <span class="important">YOU SHOULD NEVER LOGIN ANY ACCOUNT VIA ONLINE PROXY</span>.</li>
-      </ul>
-
-    <h3>
-        <br>
-        <span>Bypass the network blockade:</span>
-        <br><br>
-        <span>Traditional VPNs.</span>
-        <br><br>
-        <span>Bypass by proxy: You can buy a domain($1) and setup by yourself: </span><a href="https://github.com/1234567Yang/cf-proxy-ex/blob/main/deploy_on_deno_tutorial.md">how to setup a proxy</a><span>. Unless they use white list mode, this can always work.</span>
-        <br><br>
-        <span>Youtube video unblock: "Thanks" for Russia that they started to invade Ukraine and Google blocked the traffic from Russia, there are a LOT of mirror sites working. You can even <a href="https://github.com/iv-org/invidious">setup</a> one by yourself.</span>
-    </h3>
-    <p style="font-size:280px !important;width:100%;" class="center">
-        ☭
-    </p>
+  <div class="container">
+    <h1>Web Proxy</h1>
+    <p class="subtitle">Akses situs web melalui proxy</p>
+    
+    <form id="urlForm" onsubmit="redirectToProxy(event)">
+      <div class="form-group">
+        <input type="text" id="targetUrl" placeholder="Masukkan URL (contoh: github.com atau https://github.com)" autofocus>
+      </div>
+      <button type="submit" id="jumpButton">Akses</button>
+    </form>
+    
+    <div class="example">
+      <strong>Cara penggunaan:</strong><br>
+      Masukkan URL website yang ingin diakses. Contoh:<br>
+      • github.com<br>
+      • https://github.com<br>
+      • www.google.com
+    </div>
+    
+    <div class="warning">
+      <strong>⚠️ Peringatan:</strong> Jangan login ke website melalui proxy ini untuk keamanan Anda.
+    </div>
+    
+    <div class="footer">
+      <a href="https://github.com/1234567Yang/cf-proxy-ex/" target="_blank">Cloudflare Proxy EX</a>
+    </div>
+  </div>
+  
+  <script>
+    function redirectToProxy(event) {
+      event.preventDefault();
+      const targetUrl = document.getElementById('targetUrl').value.trim();
+      if (!targetUrl) {
+        alert('Masukkan URL terlebih dahulu');
+        return;
+      }
+      const currentOrigin = window.location.origin;
+      window.location.href = currentOrigin + '/' + targetUrl;
+    }
+  </script>
 </body>
 </html>
 `;
@@ -944,11 +1016,17 @@ const redirectError = `
 //new URL(请求路径, base路径).href;
 
 async function handleRequest(request) {
-
+  try {
   // =======================================================================================
   // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* 前置条件 *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
   // =======================================================================================
 
+  // Pastikan variabel global di-set dengan benar
+  const url = new URL(request.url);
+  if (!thisProxyServerUrlHttps || !thisProxyServerUrl_hostOnly) {
+    thisProxyServerUrlHttps = `${url.protocol}//${url.hostname}/`;
+    thisProxyServerUrl_hostOnly = url.host;
+  }
 
   const userAgent = request.headers.get('User-Agent');
   if (userAgent.includes("Bytespider")) {
@@ -986,7 +1064,6 @@ async function handleRequest(request) {
   // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* 处理前置情况 *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
   // =======================================================================================
 
-  const url = new URL(request.url);
   if (request.url.endsWith("favicon.ico")) {
     return getRedirect("https://www.baidu.com/favicon.ico");
   }
@@ -1200,6 +1277,10 @@ async function handleRequest(request) {
           hasBom = true;
         }
 
+        // Encode HTML body to bytes array (server-side)
+        const bodyBytes = Array.from(new TextEncoder().encode(bd));
+        const bodyBytesString = bodyBytes.join(',');
+
         var inject =
           `
         <!DOCTYPE html>
@@ -1233,10 +1314,10 @@ async function handleRequest(request) {
           // it HAVE to be encoded because html will parse the </scri... tag inside script
           
           
-          const originalBodyBase64Encoded = "${new TextEncoder().encode(bd)}";
+          const originalBodyBytes = [${bodyBytesString}];
 
 
-          const bytes = new Uint8Array(originalBodyBase64Encoded.split(',').map(Number));
+          const bytes = new Uint8Array(originalBodyBytes);
 
 
 
@@ -1456,6 +1537,15 @@ async function handleRequest(request) {
 
 
   return modifiedResponse;
+  } catch (error) {
+    console.error("Error in handleRequest:", error);
+    return new Response("Internal Server Error: " + error.message, {
+      status: 500,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8"
+      }
+    });
+  }
 }
 
 //https://stackoverflow.com/questions/5142337/read-a-javascript-cookie-by-name
@@ -1538,7 +1628,12 @@ function handleWrongPwd() {
   if (showPasswordPage) {
     return getHTMLResponse(pwdPage);
   } else {
-    return getHTMLResponse("<h1>403 Forbidden</h1><br>You do not have access to view this webpage.");
+    return new Response("<h1>403 Forbidden</h1><br>You do not have access to view this webpage.", {
+      status: 403,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8"
+      }
+    });
   }
 }
 function getHTMLResponse(html) {
@@ -1550,7 +1645,12 @@ function getHTMLResponse(html) {
 }
 
 function getRedirect(url) {
-  return Response.redirect(url, 301);
+  return new Response(null, {
+    status: 301,
+    headers: {
+      'Location': url
+    }
+  });
 }
 
 // https://stackoverflow.com/questions/14480345/how-to-get-the-nth-occurrence-in-a-string

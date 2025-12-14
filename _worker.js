@@ -1,9 +1,12 @@
-addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  thisProxyServerUrlHttps = `${url.protocol}//${url.hostname}/`;
-  thisProxyServerUrl_hostOnly = url.host;
-  event.respondWith(handleRequest(event.request))
-})
+// ES Module format for Cloudflare Workers
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    thisProxyServerUrlHttps = `${url.protocol}//${url.hostname}/`;
+    thisProxyServerUrl_hostOnly = url.host;
+    return await handleRequest(request);
+  }
+}
 
 
 const str = "/";

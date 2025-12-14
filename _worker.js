@@ -951,7 +951,7 @@ const mainPage = `
     </div>
     
     <div class="warning">
-      <strong>⚠️ Peringatan:</strong> Jangan login ke website melalui proxy ini untuk keamanan Anda.
+      <strong>Browse websites privately through this proxy service</strong>
     </div>
     
     <div class="footer">

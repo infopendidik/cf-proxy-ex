@@ -955,7 +955,7 @@ const mainPage = `
     </div>
     
     <div class="footer">
-      <a href="https://github.com/1234567Yang/cf-proxy-ex/" target="_blank">Cloudflare Proxy EX</a>
+      <a href="https://rijunime.com" target="_blank">Cloudflare Proxy EX</a>
     </div>
   </div>
   
@@ -1076,7 +1076,16 @@ async function handleRequest(request) {
 
   //var siteOnly = url.pathname.substring(url.pathname.indexOf(str) + str.length);
 
-  var actualUrlStr = url.pathname.substring(url.pathname.indexOf(str) + str.length) + url.search + url.hash;
+  // Check if user wants to view source (via query parameter) - check before parsing actualUrlStr
+  const viewSource = url.searchParams.get('source') === 'true' || url.searchParams.get('view-source') === 'true';
+
+  // Parse actualUrlStr from pathname only (query params from URL are proxy params, not target URL params)
+  var actualUrlStr = url.pathname.substring(url.pathname.indexOf(str) + str.length);
+  
+  // Add hash if present (hash is part of target URL)
+  if (url.hash) {
+    actualUrlStr = actualUrlStr + url.hash;
+  }
   
   // Remove "------" prefix if present
   if (actualUrlStr.startsWith("------")) {
@@ -1122,7 +1131,13 @@ async function handleRequest(request) {
   const actualUrl = new URL(actualUrlStr);
 
   //check for upper case: proxy.com/https://ABCabc.dev
-  if (actualUrlStr != actualUrl.href) return getRedirect(thisProxyServerUrlHttps + "------" + actualUrl.href);
+  if (actualUrlStr != actualUrl.href) {
+    const redirectUrl = new URL(thisProxyServerUrlHttps + "------" + actualUrl.href);
+    if (viewSource) {
+      redirectUrl.searchParams.set('source', 'true');
+    }
+    return getRedirect(redirectUrl.href);
+  }
 
 
 
@@ -1269,6 +1284,15 @@ async function handleRequest(request) {
       //bd.includes("<html")  //不加>因为html标签上可能加属性         这个方法不好用因为一些JS中竟然也会出现这个字符串
       //也需要加上这个方法因为有时候server返回json也是html
       if (isHTML) {
+        // If user wants to view source, return original HTML without injection
+        if (viewSource) {
+          return new Response(bd, {
+            headers: {
+              "Content-Type": "text/html; charset=utf-8",
+              "X-Original-URL": actualUrlStr
+            }
+          });
+        }
         //console.log("STR" + actualUrlStr)
 
         // 这里就可以删除了，全部在客户端进行替换（以后）

@@ -29,7 +29,11 @@ var nowURL = new URL(window.location.href);
 var proxy_host = nowURL.host; //代理的host - proxy.com
 var proxy_protocol = nowURL.protocol; //代理的protocol
 var proxy_host_with_schema = proxy_protocol + "//" + proxy_host + "/"; //代理前缀 https://proxy.com/
-var original_website_url_str = window.location.href.substring(proxy_host_with_schema.length); //被代理的【完整】地址 如：https://example.com/1?q#1
+var original_website_url_str = window.location.href.substring(proxy_host_with_schema.length); //被代理的【完整】地址 如：------https://example.com/1?q#1
+// Remove "------" prefix if present
+if (original_website_url_str.startsWith("------")) {
+  original_website_url_str = original_website_url_str.substring(6); // Remove "------"
+}
 var original_website_url = new URL(original_website_url_str);
 
 var original_website_host = original_website_url_str.substring(original_website_url_str.indexOf("://") + "://".length);
@@ -71,9 +75,27 @@ relativePath_str = relativePath_str.substring("blob:".length);
 
 
 try{
-if(relativePath_str.startsWith(proxy_host_with_schema)) relativePath_str = relativePath_str.substring(proxy_host_with_schema.length);
-if(relativePath_str.startsWith(proxy_host + "/")) relativePath_str = relativePath_str.substring(proxy_host.length + 1);
-if(relativePath_str.startsWith(proxy_host)) relativePath_str = relativePath_str.substring(proxy_host.length);
+if(relativePath_str.startsWith(proxy_host_with_schema)) {
+  relativePath_str = relativePath_str.substring(proxy_host_with_schema.length);
+  // Remove "------" prefix if present
+  if (relativePath_str.startsWith("------")) {
+    relativePath_str = relativePath_str.substring(6);
+  }
+}
+if(relativePath_str.startsWith(proxy_host + "/")) {
+  relativePath_str = relativePath_str.substring(proxy_host.length + 1);
+  // Remove "------" prefix if present
+  if (relativePath_str.startsWith("------")) {
+    relativePath_str = relativePath_str.substring(6);
+  }
+}
+if(relativePath_str.startsWith(proxy_host)) {
+  relativePath_str = relativePath_str.substring(proxy_host.length);
+  // Remove "------" prefix if present
+  if (relativePath_str.startsWith("------")) {
+    relativePath_str = relativePath_str.substring(6);
+  }
+}
 
 // 把relativePath去除掉当前代理的地址 https://proxy.com/ ， relative path成为 被代理的（相对）地址，target_website.com/path
 
@@ -107,10 +129,17 @@ return relativePath_str;
 }
 
 
-// change from https://proxy.com/https://target_website.com/a to https://target_website.com/a
+// change from https://proxy.com/------https://target_website.com/a to https://target_website.com/a
 function getOriginalUrl(url){
 if(url == null) return null;
-if(url.startsWith(proxy_host_with_schema)) return url.substring(proxy_host_with_schema.length);
+if(url.startsWith(proxy_host_with_schema)) {
+  var result = url.substring(proxy_host_with_schema.length);
+  // Remove "------" prefix if present
+  if (result.startsWith("------")) {
+    result = result.substring(6);
+  }
+  return result;
+}
 return url;
 }
 

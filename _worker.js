@@ -90,7 +90,7 @@ absolutePath = absolutePath.replaceAll(proxy_host, original_website_host);
 absolutePath = absolutePath.replaceAll(encodeURI(proxy_host), encodeURI(original_website_host));
 absolutePath = absolutePath.replaceAll(encodeURIComponent(proxy_host), encodeURIComponent(original_website_host));
 
-absolutePath = proxy_host_with_schema + absolutePath;
+absolutePath = proxy_host_with_schema + "------" + absolutePath;
 
 
 
@@ -772,9 +772,9 @@ function replaceContentPaths(content){
 
   content = content.replaceAll(regex, (match) => {
     if (match.startsWith("http")) {
-      return proxy_host_with_schema + match;
+      return proxy_host_with_schema + "------" + match;
     } else {
-      return proxy_host + "/" + match;
+      return proxy_host + "/------" + match;
     }
   });
 
@@ -939,7 +939,7 @@ const mainPage = `
         return;
       }
       const currentOrigin = window.location.origin;
-      window.location.href = currentOrigin + '/' + targetUrl;
+      window.location.href = currentOrigin + '/------' + targetUrl;
     }
   </script>
 </body>
@@ -1048,6 +1048,12 @@ async function handleRequest(request) {
   //var siteOnly = url.pathname.substring(url.pathname.indexOf(str) + str.length);
 
   var actualUrlStr = url.pathname.substring(url.pathname.indexOf(str) + str.length) + url.search + url.hash;
+  
+  // Remove "------" prefix if present
+  if (actualUrlStr.startsWith("------")) {
+    actualUrlStr = actualUrlStr.substring(6); // Remove "------"
+  }
+  
   if (actualUrlStr == "") { //先返回引导界面
     return getHTMLResponse(mainPage);
   }
@@ -1071,7 +1077,7 @@ async function handleRequest(request) {
       if (lastVisit != null && lastVisit != "") {
         //(!lastVisit.startsWith("http"))?"https://":"" + 
         //现在的actualUrlStr如果本来不带https:// 的话那么现在也不带，因为判断是否带protocol在后面
-        return getRedirect(thisProxyServerUrlHttps + lastVisit + "/" + actualUrlStr);
+        return getRedirect(thisProxyServerUrlHttps + "------" + lastVisit + "/" + actualUrlStr);
       }
     }
     return getHTMLResponse("Something is wrong while trying to get your cookie: <br> siteCookie: " + siteCookie + "<br>" + "lastSite: " + lastVisit);
@@ -1080,14 +1086,14 @@ async function handleRequest(request) {
 
   if (!actualUrlStr.startsWith("http") && !actualUrlStr.includes("://")) { //从www.xxx.com转到https://www.xxx.com
     //actualUrlStr = "https://" + actualUrlStr;
-    return getRedirect(thisProxyServerUrlHttps + "https://" + actualUrlStr);
+    return getRedirect(thisProxyServerUrlHttps + "------https://" + actualUrlStr);
   }
 
   //if(!actualUrlStr.endsWith("/")) actualUrlStr += "/";
   const actualUrl = new URL(actualUrlStr);
 
   //check for upper case: proxy.com/https://ABCabc.dev
-  if (actualUrlStr != actualUrl.href) return getRedirect(thisProxyServerUrlHttps + actualUrl.href);
+  if (actualUrlStr != actualUrl.href) return getRedirect(thisProxyServerUrlHttps + "------" + actualUrl.href);
 
 
 
@@ -1174,7 +1180,7 @@ async function handleRequest(request) {
   if (response.status.toString().startsWith("3") && response.headers.get("Location") != null) {
     //console.log(base_url + response.headers.get("Location"))
     try {
-      return getRedirect(thisProxyServerUrlHttps + new URL(response.headers.get("Location"), actualUrlStr).href);
+      return getRedirect(thisProxyServerUrlHttps + "------" + new URL(response.headers.get("Location"), actualUrlStr).href);
     } catch {
       getHTMLResponse(redirectError + "<br>the redirect url:" + response.headers.get("Location") + ";the url you are now at:" + actualUrlStr);
     }
@@ -1334,9 +1340,9 @@ async function handleRequest(request) {
         let regex = new RegExp(`(?<!src="|href=")(https?:\\/\\/[^\s'"]+)`, 'g');
         bd = bd.replaceAll(regex, (match) => {
           if (match.startsWith("http")) {
-            return thisProxyServerUrlHttps + match;
+            return thisProxyServerUrlHttps + "------" + match;
           } else {
-            return thisProxyServerUrl_hostOnly + "/" + match;
+            return thisProxyServerUrl_hostOnly + "/------" + match;
           }
         });
       }

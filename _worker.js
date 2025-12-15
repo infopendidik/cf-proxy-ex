@@ -951,7 +951,7 @@ const mainPage = `
     </div>
     
     <div class="warning">
-      <strong>Browse websites privately through this proxy service</strong>
+      <strong>⚠️ Peringatan:</strong> Jangan login ke website melalui proxy ini untuk keamanan Anda.
     </div>
     
     <div class="footer">
@@ -1139,6 +1139,9 @@ async function handleRequest(request) {
     return getRedirect(redirectUrl.href);
   }
 
+  // Flag permintaan JSON agar tidak diinjeksi HTML dan dipaksakan Accept JSON
+  const isJsonRequest = url.searchParams.get('mode') === 'json' ||
+    (request.headers.get('Accept') && request.headers.get('Accept').includes('application/json'));
 
 
 
@@ -1156,6 +1159,10 @@ async function handleRequest(request) {
     var newValue = newValue.replaceAll(thisProxyServerUrl_hostOnly, actualUrl.host); // Hanya ganti host
     clientHeaderWithChange.set(key, newValue);
   });
+  // Paksa permintaan JSON meminta JSON
+  if (isJsonRequest) {
+    clientHeaderWithChange.set("Accept", "application/json");
+  }
 
   // =======================================================================================
   // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* Handle Body dari Client *-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -1230,6 +1237,12 @@ async function handleRequest(request) {
     }
   }
 
+  // Jika permintaan JSON, lewati injeksi/transformasi dan kembalikan apa adanya
+  if (isJsonRequest) {
+    const passthrough = new Response(response.body, response);
+    passthrough.headers.set('Access-Control-Allow-Origin', '*');
+    return passthrough;
+  }
 
 
   // =======================================================================================
